@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'custom_colors.dart';
 
 class CustomTextStyles {
-  static TextStyle regularLink({Color color = CustomColors.BRAND_PRIMARY_40}) {
+  static TextStyle regularLink({
+    Color color = CustomColors.BRAND_PRIMARY_40,
+  }) {
     return TextStyle(
-      fontFamily: 'OpenSans',
+      // fontFamily: 'OpenSans',
       fontSize: 14,
       color: color,
       fontWeight: FontWeight.w600,
@@ -20,7 +22,7 @@ class CustomTextStyles {
     fontStyle = FontStyle.normal,
   }) {
     return TextStyle(
-      fontFamily: 'OpenSans',
+      // fontFamily: 'OpenSans',
       fontSize: fontSize,
       color: color,
       fontWeight: fontWeight,
