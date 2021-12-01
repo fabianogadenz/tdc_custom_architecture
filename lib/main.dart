@@ -1,3 +1,4 @@
+import 'package:custom_architecture/core/styles/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -7,20 +8,29 @@ import 'core/routes/routes_app.dart';
 
 void main() async {
   await GetStorage.init();
-  runApp(const MyApp());
+  runApp(
+    MyApp(
+      getStorage: GetStorage(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final GetStorage getStorage;
+
+  const MyApp({Key? key, required this.getStorage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Remessa Architecture',
       debugShowCheckedModeBanner: false,
+      theme: CustomTheme.dark,
       getPages: RoutesApp.routes,
-      initialRoute: RoutesApp.getInitialRoute(),
-      initialBinding: InitialBinding(),
+      initialRoute: getStorage.read('token') != null
+          ? RoutesApp.homeScreen
+          : RoutesApp.loginScreen,
+      initialBinding: InitialBinding(getStorage),
     );
   }
 }

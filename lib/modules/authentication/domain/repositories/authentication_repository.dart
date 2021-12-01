@@ -3,4 +3,7 @@ import 'package:custom_architecture/modules/authentication/domain/entities/authe
 
 abstract class AuthenticationRepository {
   Future<AuthenticationLoginEntity> doLogin(LoginCommand command);
+  void saveLocalUser(String token, String name);
+  void logout();
+  String? getAuthUser();
 }

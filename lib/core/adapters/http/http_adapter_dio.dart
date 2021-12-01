@@ -1,13 +1,11 @@
-import 'package:custom_architecture/core/controllers/app_controller.dart';
+import 'package:custom_architecture/core/models/error_message_model.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
-import 'package:get/get.dart';
 
 import 'http_adapter.dart';
 
 class HttpAdapterDio implements HttpAdapter {
-  late final Dio _dio;
-  AppController app = Get.find();
+  final Dio dio;
 
   InterceptorsWrapper authInterceptor(String accessToken) {
     return InterceptorsWrapper(
@@ -21,29 +19,25 @@ class HttpAdapterDio implements HttpAdapter {
 
   @override
   setAccessToken(String accessToken) {
-    _dio.interceptors.add(
+    dio.interceptors.add(
       authInterceptor(accessToken),
     );
   }
 
-  HttpAdapterDio() {
-    _dio = Dio();
+  HttpAdapterDio(this.dio) {
     String baseUrl = '';
 
-    if (app.token.isNotEmpty) {
-      _dio.options.headers['Authorization'] = 'Bearer ${app.token}';
-    }
-    _dio.interceptors.add(
+    dio.interceptors.addAll([
       DioCacheManager(
         CacheConfig(
           baseUrl: baseUrl,
         ),
       ).interceptor,
-    );
+    ]);
 
-    _dio.options.baseUrl = baseUrl;
-    _dio.options.connectTimeout = 40000;
-    _dio.options.receiveTimeout = 40000;
+    dio.options.baseUrl = baseUrl;
+    dio.options.connectTimeout = 40000;
+    dio.options.receiveTimeout = 40000;
   }
 
   @override
@@ -53,20 +47,18 @@ class HttpAdapterDio implements HttpAdapter {
     bool hasCache = false,
   }) async {
     try {
-      final response = await _dio.get<T>(
+      final response = await dio.get<T>(
         path,
         queryParameters: params,
-        options: hasCache ? buildCacheOptions(Duration(days: 7)) : null,
+        options: hasCache ? buildCacheOptions(const Duration(days: 7)) : null,
       );
 
       return response.data;
     } on DioError catch (e) {
-      print(e);
-      app.setError(e.response?.data['message'] ?? e.message);
+      throw ErrorMessageModel(e.message);
     } catch (e) {
       rethrow;
     }
-    return null;
   }
 
   @override
@@ -76,20 +68,18 @@ class HttpAdapterDio implements HttpAdapter {
     bool hasCache = false,
   }) async {
     try {
-      final response = await _dio.post<T>(
+      final response = await dio.post<T>(
         path,
         data: data,
-        options: hasCache ? buildCacheOptions(Duration(days: 7)) : null,
+        options: hasCache ? buildCacheOptions(const Duration(days: 7)) : null,
       );
 
       return response.data;
     } on DioError catch (e) {
-      print(e);
-      app.setError(e.response?.data['message'] ?? e.message);
+      throw ErrorMessageModel(e.message);
     } catch (e) {
       rethrow;
     }
-    return null;
   }
 
   @override
@@ -99,7 +89,7 @@ class HttpAdapterDio implements HttpAdapter {
     bool hasCache = false,
   }) async {
     try {
-      final response = await _dio.put<T>(
+      final response = await dio.put<T>(
         path,
         data: data,
         options: hasCache ? buildCacheOptions(const Duration(days: 7)) : null,
@@ -107,12 +97,10 @@ class HttpAdapterDio implements HttpAdapter {
 
       return response.data;
     } on DioError catch (e) {
-      app.setError(e.response?.data['message'] ?? e.message);
+      throw ErrorMessageModel(e.message);
     } catch (e) {
       rethrow;
     }
-
-    return null;
   }
 
   @override
@@ -122,33 +110,29 @@ class HttpAdapterDio implements HttpAdapter {
     bool hasCache = false,
   }) async {
     try {
-      final response = await _dio.patch<T>(
+      final response = await dio.patch<T>(
         path,
         data: data,
-        options: hasCache ? buildCacheOptions(Duration(days: 7)) : null,
+        options: hasCache ? buildCacheOptions(const Duration(days: 7)) : null,
       );
 
       return response.data;
     } on DioError catch (e) {
-      app.setIsLoading(false);
-      app.setError(e.response?.data['message'] ?? e.message);
+      throw ErrorMessageModel(e.message);
     } catch (e) {
       rethrow;
     }
-
-    return null;
   }
 
   @override
   Future<T?> formData<T>(String path, {data, bool hasCache = false}) async {
     try {
-      final response = await _dio.post<T>(
+      final response = await dio.post<T>(
         path,
         data: data,
         options: Options(
           contentType: 'multipart/form-data;',
           headers: {
-            'Authorization': 'Bearer ${app.token}',
             'Content-Type': 'multipart/form-data;',
           },
         ),
@@ -156,11 +140,9 @@ class HttpAdapterDio implements HttpAdapter {
 
       return response.data;
     } on DioError catch (e) {
-      print(e);
-      app.setError(e.response?.data['message'] ?? e.message);
+      throw ErrorMessageModel(e.message);
     } catch (e) {
       rethrow;
     }
-    return null;
   }
 }

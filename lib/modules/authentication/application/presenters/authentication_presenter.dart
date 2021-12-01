@@ -1,21 +1,32 @@
 import 'package:custom_architecture/core/usecases/command_usecase.dart';
-import 'package:custom_architecture/modules/authentication/application/view_models/authentication_view_model.dart';
+import 'package:custom_architecture/core/usecases/query_usecase.dart';
+import 'package:custom_architecture/modules/authentication/application/view_models/user_view_model.dart';
 import 'package:custom_architecture/modules/authentication/domain/commands/login_command.dart';
-import 'package:custom_architecture/modules/authentication/domain/entities/authentication_login_entity.dart';
 
 class AuthenticationPresenter {
-  final CommandUseCase<LoginCommand, Future<AuthenticationLoginEntity>>
-      loginUsecase;
+  final CommandUseCase<LoginCommand, Future<void>> loginUseCase;
+  final QueryUseCase<void> logoutUseCase;
+  final QueryUseCase<String?> getAuthUserUseCase;
 
   AuthenticationPresenter({
-    required this.loginUsecase,
+    required this.loginUseCase,
+    required this.logoutUseCase,
+    required this.getAuthUserUseCase,
   });
 
-  Future<AuthenticationViewModel> doLogin(LoginCommand command) async {
-    AuthenticationLoginEntity loginEntity = await loginUsecase(command);
+  Future<void> login(LoginCommand command) async {
+    await loginUseCase(command);
+  }
 
-    return AuthenticationViewModel.fromEntity(
-      loginEntity,
-    );
+  Future<void> logout() async {
+    logoutUseCase();
+  }
+
+  UserViewModel? getUser() {
+    final name = getAuthUserUseCase();
+
+    if (name != null) {
+      return UserViewModel(name: name, email: 'zeucxb@gmail.com');
+    }
   }
 }

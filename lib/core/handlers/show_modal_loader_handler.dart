@@ -12,14 +12,12 @@ class ShowModalLoaderHandler {
     Get.dialog(
       Center(
         child: ConstrainedBox(
-          constraints: BoxConstraints(
+          constraints: const BoxConstraints(
             minHeight: 5,
             maxHeight: 50,
             minWidth: 5,
           ),
-          child: Image.asset(
-            'assets/images/pingpong_fill_logo.png',
-          ),
+          child: const CircularProgressIndicator(),
         ),
       ),
       barrierDismissible: false,
