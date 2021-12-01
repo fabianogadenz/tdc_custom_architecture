@@ -33,13 +33,14 @@ class AppController extends GetxController {
   //   box.write('user', user.toJson());
   // }
 
-  // String get token {
-  //   if (!box.hasData('authentication')) {
-  //     return '';
-  //   }
-  //   LoginModel auth = LoginModel.fromJson(box.read('authentication'););
-  //   return auth.accessToken!;
-  // }
+  String get token {
+    // if (!box.hasData('authentication')) {
+    //   return '';
+    // }
+    // LoginModel auth = LoginModel.fromJson(box.read('authentication'););
+    // return auth.accessToken!;
+    return '';
+  }
 
   // UserModel get getCurrentUser {
   //   UserModel user = UserModel.fromJson(box.read('user'););
