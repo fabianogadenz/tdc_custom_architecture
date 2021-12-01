@@ -28,7 +28,7 @@ class HttpAdapterDio implements HttpAdapter {
 
   HttpAdapterDio() {
     _dio = Dio();
-    String baseUrl = 'http://18.190.91.110:5000/';
+    String baseUrl = '';
 
     if (app.token.isNotEmpty) {
       _dio.options.headers['Authorization'] = 'Bearer ${app.token}';
